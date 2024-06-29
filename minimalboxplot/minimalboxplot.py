@@ -100,13 +100,14 @@ class MinimalBoxPlot(object):
         # get some data
         x_vals = []
         y_vals = []
-        for i, m in enumerate(BP["medians"]):
-
-            x = m.get_xdata()
+        for _, w in enumerate(BP["whiskers"]):
+            x = w.get_xdata()
             if x[0] in x_vals:
                 continue
             else:
                 x_vals.append(x[0])
+
+        for w, m in zip(BP["whiskers"], BP["medians"]):
             y = m.get_ydata()
             if y[0] in y_vals:
                 continue
@@ -115,12 +116,11 @@ class MinimalBoxPlot(object):
 
             m.set_visible(False)
 
-        # additional info
-        positions = np.add(x_vals, 0.75) # for some reason, x positions are offset by 0.75 units
+        # additional info/customizations
         color = BP["whiskers"][0].get_color()
-        ax.set(xticks=positions)
+        ax.set(xticks=x_vals)
 
         # plot new medians
-        ax.scatter(positions, y_vals, marker='o', color=color)
+        ax.scatter(x_vals, y_vals, marker='o', color=color)
 
         return mplf.Figure

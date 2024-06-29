@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="minimalboxplot",
-    version="1.0.2",
+    version="2.0",
     author="Will Decker",
     author_email="deckerwill7@gmail.com",
     description="Minimal boxplots a la Tufte (2001) p. 125",
