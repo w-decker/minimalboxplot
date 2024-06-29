@@ -32,9 +32,9 @@ class MinimalBoxPlot(object):
 
     Methods
     -------
-    minimal: creates boxplot using similar syntax to original matplotlib
+    minimal: creates boxplot using similar syntax to original matplotlib implementation
 
-    tominimal: converts existing boxplot to minimal
+    to_minimal: converts existing boxplot to minimal boxplot
 
     """
 
@@ -77,9 +77,50 @@ class MinimalBoxPlot(object):
         # adjust x-axis
         ax.set(xticks=positions)
 
-    def tominimal(figure:mplf.Figure):
+    def to_minimal(figure:mplf.Figure, BP):
+        """
+        Parameters
+        ----------
+        figure: plt.figure.Figure
 
-        # get axes
+        BP: dict
+            Dictionary output returned from original plot generation
+            See https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.boxplot.html
+        """
+
+        # get current acis
         ax = figure.gca()
-        
-        return ax.figure
+
+        # remove unnecessary elements
+        for _, box in enumerate(BP["boxes"]):
+            box.set_visible(False)
+        for _, cap in enumerate(BP["caps"]):
+            cap.set_visible(False)
+
+        # get some data
+        x_vals = []
+        y_vals = []
+        for i, m in enumerate(BP["medians"]):
+
+            x = m.get_xdata()
+            if x[0] in x_vals:
+                continue
+            else:
+                x_vals.append(x[0])
+            y = m.get_ydata()
+            if y[0] in y_vals:
+                continue
+            else:
+                y_vals.append(y[0])
+
+            m.set_visible(False)
+
+        # additional info
+        positions = np.add(x_vals, 0.75) # for some reason, x positions are offset by 0.75 units
+        color = BP["whiskers"][0].get_color()
+        ax.set(xticks=positions)
+
+        # plot new medians
+        ax.scatter(positions, y_vals, marker='o', color=color)
+
+        return mplf.Figure
